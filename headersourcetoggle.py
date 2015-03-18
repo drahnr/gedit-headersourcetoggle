@@ -24,7 +24,6 @@ class HeaderSourceToggleApp(GObject.Object, Gedit.AppActivatable):
 		self.app.add_accelerator("<Control>r", "win.headersourcetoggle", None)
 
 	def do_deactivate(self):
-		print ("APP do remove called")
 		self.app.remove_accelerator("win.headersourcetoggle")
 
 
@@ -80,7 +79,6 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 
 
 	def do_activate(self):
-		print ("WIN do activate called")
 		self.action = Gio.SimpleAction(name="headersourcetoggle")
 		self.action.connect('activate', lambda a, p: self.do_header_source_toggle(self.action))
 		self.window.add_action(self.action)
@@ -96,6 +94,5 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 		self.window.lookup_action("headersourcetoggle").set_enabled(self.window.get_active_document() is not None)
 
 	def do_deactivate(self):
-		print ("WIN do remove called")
 		self.window.remove_action("headersourcetoggle")
 		
