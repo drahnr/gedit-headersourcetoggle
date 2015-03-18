@@ -15,4 +15,6 @@ Only tested against 3.14.2, anything newer should work.
 
 
 
+### License
 
+GPLv2
