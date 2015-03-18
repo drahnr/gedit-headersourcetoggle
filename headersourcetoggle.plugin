@@ -1,0 +1,9 @@
+[Plugin]
+Loader=python3
+Module=headersourcetoggle
+IAge=3
+Name=Header Source Toggle
+Description=Toggle between header and source files in the same dir.
+Authors=Bernhard Schuster <hej@ahoi.io>
+Copyright=Copyright (c) 2015 Bernhard Schuster <hej@ahoi.io>
+Website=https://ahoi.io
