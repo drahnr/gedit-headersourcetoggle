@@ -2,7 +2,7 @@
 ## a gedit 3 plugin
 
 
-Toggles between header and source files `[.cpp,.c]` ←→ `[.hpp,.h]` whenever your press <kbd>Ctrl</kbd>+<kbd>r</kbd>.
+Toggles between header and source files `[.cpp,.c]` ←→ `[.hpp,.h]` whenever your press <kbd>F3</kbd>.
 
 ### Compatibility
 
