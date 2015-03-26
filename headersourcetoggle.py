@@ -26,7 +26,7 @@ class HeaderSourceToggleApp(GObject.Object, Gedit.AppActivatable):
 		GObject.Object.__init__(self)
 
 	def do_activate(self):
-		self.app.add_accelerator("<Control>r", "win.headersourcetoggle", None)
+		self.app.add_accelerator("F3", "win.headersourcetoggle", None)
 
 	def do_deactivate(self):
 		self.app.remove_accelerator("win.headersourcetoggle")
@@ -42,10 +42,24 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 	def __init__(self):
 		GObject.Object.__init__(self)
 
+
+	def do_tab_magic(complement):
+		if not complement:
+			return
+		for doc in self.window.get_documents():
+			loc = doc.get_location()
+			if loc and loc.get_path() == complement:
+				tab = Gedit.Tab.get_from_document(doc)
+				if tab:
+					self.window.set_active_tab(tab)
+					return
+		self.window.create_tab_from_location(Gio.file_new_for_path(complement), None, 0, 0, False, True)
+
 	def do_header_source_toggle(self, action, data=None):
 		doc = self.window.get_active_document()
 		if not doc:
 			return
+
 		loc = doc.get_location()
 		if not loc:
 			return
@@ -69,19 +83,8 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 				if os.path.isfile(root + case):
 					complement = root + case
 					break
-		if complement:
-			for doc in self.window.get_documents():
-				loc = doc.get_location()
-				if not loc:
-					continue
-				path = loc.get_path()
-				if path == complement:
-					tab = Gedit.Tab.get_from_document(doc)
-					if tab:
-						self.window.set_active_tab(tab)
-						return
-			self.window.create_tab_from_location(Gio.file_new_for_path(complement), None, 0, 0, False, True)
 
+		do_tab_magic(complement)
 
 	def do_activate(self):
 		self.action = Gio.SimpleAction(name="headersourcetoggle")
