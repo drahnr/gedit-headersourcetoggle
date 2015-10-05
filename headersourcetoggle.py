@@ -43,7 +43,7 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 		GObject.Object.__init__(self)
 
 
-	def do_tab_magic(complement):
+	def tab_magic(self, complement):
 		if not complement:
 			return
 		for doc in self.window.get_documents():
@@ -55,7 +55,7 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 					return
 		self.window.create_tab_from_location(Gio.file_new_for_path(complement), None, 0, 0, False, True)
 
-	def do_header_source_toggle(self, action, data=None):
+	def toggle_header_source(self, action, data=None):
 		doc = self.window.get_active_document()
 		if not doc:
 			return
@@ -70,10 +70,11 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 
 		#TODO: some projects have them in src/*.c and inc/*.h
 		root, ext = os.path.splitext(path)
-		if ext.lower() in (".h", ".hpp"):
-			complement_extensions = [".c", ".cpp"]
-		elif ext.lower() in (".c", ".cpp"):
-			complement_extensions = [".h", ".hpp"]
+		ext = ext.lower()
+		if ext in (".h", ".hpp"):
+			complement_extensions = [".c", ".cpp", ".cxx"]
+		elif ext in (".c", ".cpp"):
+			complement_extensions = [".h", ".hpp", ".hxx"]
 		else:
 			return
 
@@ -84,11 +85,11 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 					complement = root + case
 					break
 
-		do_tab_magic(complement)
+		self.tab_magic(complement)
 
 	def do_activate(self):
 		self.action = Gio.SimpleAction(name="headersourcetoggle")
-		self.action.connect('activate', lambda a, p: self.do_header_source_toggle(self.action))
+		self.action.connect('activate', lambda sender, data: self.toggle_header_source(self.action))
 		self.window.add_action(self.action)
 
 #		button = Gtk.Button.new()
@@ -98,7 +99,8 @@ class HeaderSourceToggleWindow(GObject.Object, Gedit.WindowActivatable):
 #		button.show()
 
 	def do_update_state(self):
-		self.window.lookup_action("headersourcetoggle").set_enabled(self.window.get_active_document() is not None)
+		if self.action:
+			self.action.set_enabled(self.window.get_active_document() is not None)
 
 	def do_deactivate(self):
 		self.window.remove_action("headersourcetoggle")
